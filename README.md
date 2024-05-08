@@ -8,7 +8,7 @@ Development Timeline: April 22, 2024 - June 21, 2024.
 ![Logo](SystemOverviewDiagram.png)
 
 
-## The-Shelf-Scanners (The Team)
+## The Shelf-Scanners (The Team)
 
 Josephine Stensgaard
 
@@ -25,10 +25,10 @@ Anastasia Lukanova
 
 ## Features
 
-- Automated inventory management
-- Clear overview of all refrigerator products
-- Real-time detection og product additions and removals.
-- Expiry date tracking and alerts 
+- Automated inventory management.
+- Clear overview of all refrigerator products.
+- Real-time detection of product additions and removals.
+- Expiry date tracking and alerts.
 
 
 

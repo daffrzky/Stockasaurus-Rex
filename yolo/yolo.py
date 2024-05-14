@@ -1,4 +1,5 @@
 import yolov5
+import cv2
 
 # load pretrained model
 model = yolov5.load('yolov5s.pt')
@@ -10,27 +11,30 @@ model.agnostic = False  # NMS class-agnostic
 model.multi_label = False  # NMS multiple labels per box
 model.max_det = 1000  # maximum number of detections per image
 
-# set image
-img = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcbtBAH-_VfE5VtqDp7zHS47-5VmxcsPj66KG82sORpw&s'
+cap = cv2.VideoCapture(0)
 
-# perform inference
-results = model(img)
+while True:
+    ret, frame = cap.read()
 
-# inference with larger input size
-results = model(img, size=1280)
+    results = model(frame)
 
-# inference with test time augmentation
-results = model(img, augment=True)
+    # parse results
+    predictions = results.pred[0]
+    boxes = predictions[:, :4].detach().cpu().numpy()
+    scores = predictions[:, 4].detach().cpu().numpy()
+    categories = predictions[:, 5].detach().cpu().numpy()
+    
+    for box,score,category in zip(boxes, scores, categories):
+        x1, y1, x2, y2 = box.astype(int)
+        label = model.names[int(category)]
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.putText(frame, f"{label}: {score:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-# parse results
-predictions = results.pred[0]
-boxes = predictions[:, :4] # x1, y1, x2, y2
-scores = predictions[:, 4]
-categories = predictions[:, 5]
+    cv2.imshow('YOLOv5 Object Detection', frame)
 
-# show detection bounding boxes on image
-results.show()
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-# save results into "results/" folder
-results.save(save_dir='results/')
 
+cap.release()
+cv2.destroyAllWindows()
